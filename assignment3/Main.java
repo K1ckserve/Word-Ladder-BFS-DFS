@@ -42,7 +42,7 @@ public class Main {
      */
     public static ArrayList<String> parse(Scanner keyboard) {
         // TODO
-
+        
         return null;
     }
 
