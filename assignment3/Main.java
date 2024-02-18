@@ -42,7 +42,7 @@ public class Main {
      */
     public static ArrayList<String> parse(Scanner keyboard) {
         // TODO
-        
+
         return null;
     }
 
@@ -82,5 +82,14 @@ public class Main {
             words.add(infile.next().toUpperCase());
         }
         return words;
+    }
+    public static boolean helper(String one, String two){
+        int count = 0;
+        for(int i =0; i<one.length(); i++){
+            if(one.charAt(i) == two.charAt(i)){
+                count++;
+            }
+        }
+        return count >= 4;
     }
 }
