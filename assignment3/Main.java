@@ -3,14 +3,16 @@ package assignment3;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
     // static variables and constants only here.
+    public static ArrayList<String> nodes;
+    public static ArrayList<String> path;
+    public static ArrayList<String> keyWords;
+    public static Queue<Character> alphabet;
+    public static Set<String> dictionary;
 
     public static void main(String[] args) throws Exception {
         Scanner kb;     // input Scanner for commands
@@ -25,6 +27,9 @@ public class Main {
             ps = System.out;                // default output to Stdout
         }
         initialize();
+        parse(kb);
+        getWordLadderBFS(keyWords.get(0), keyWords.get(1));
+        printLadder(keyWords);
 
         // TODO methods to read in words, output ladder
     }
@@ -33,6 +38,14 @@ public class Main {
         // initialize your static variables or constants here.
         // We will call this method before running our JUnit tests.  So call it
         // only once at the start of main.
+        nodes = new ArrayList<String>();
+        path = new ArrayList<String>();
+        dictionary = makeDictionary();
+        alphabet = new LinkedList<Character>();
+        char[] tmp = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+        for (int i = 0; i < tmp.length; i++) {
+            alphabet.add(tmp[i]);
+        }
     }
 
     /**
@@ -41,9 +54,17 @@ public class Main {
      * If command is /quit, return empty ArrayList.
      */
     public static ArrayList<String> parse(Scanner keyboard) {
-        // TODO
-
-        return null;
+        int i = 2;
+        keyWords = new ArrayList<String>();
+        while (i > 0) {
+            String tmp = keyboard.next();
+            if (Objects.equals(tmp, "/quit")) {
+                return keyWords;
+            }
+            keyWords.add(tmp);
+            i--;
+        }
+        return keyWords;
     }
 
     public static ArrayList<String> getWordLadderDFS(String start, String end) {
@@ -55,17 +76,38 @@ public class Main {
     }
 
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-        // TODO some code
+        Queue<String> undiscoveredNodes = new LinkedList<String>();
+        undiscoveredNodes.add(start);
+        ArrayList<LinkedList<String>> adj_list = new ArrayList<LinkedList<String>>();
+        adj_list.add(new LinkedList<String>());
 
+        while (!undiscoveredNodes.isEmpty()) {
+            String tmp = undiscoveredNodes.poll();
+            if (wordIsValidNode() && !(nodes.contains(tmp)) && dictionary.contains(tmp)) {
+                adj_list.get(0).add(tmp);
+                undiscoveredNodes.offer();
+                //Set this node as discovered
+                //Add all of its neighbors to the queue.
+            }
+        }
         return null; // replace this line later with real return
     }
 
     public static void printLadder(ArrayList<String> ladder) {
-
+        for(int i = 0; i < ladder.size(); i++) {
+            System.out.println(ladder.get(i));
+        }
     }
 
-    // TODO
-    // Other private static methods here
+    public static boolean wordIsValidNode(String one, String two){
+        int count = 0;
+        for(int i =0; i<one.length(); i++){
+            if(one.charAt(i) == two.charAt(i)){
+                count++;
+            }
+        }
+        return count >= 4;
+    }
 
     /* Do not modify makeDictionary */
 	public static Set<String> makeDictionary() {
@@ -82,14 +124,5 @@ public class Main {
             words.add(infile.next().toUpperCase());
         }
         return words;
-    }
-    public static boolean helper(String one, String two){
-        int count = 0;
-        for(int i =0; i<one.length(); i++){
-            if(one.charAt(i) == two.charAt(i)){
-                count++;
-            }
-        }
-        return count >= 4;
     }
 }
