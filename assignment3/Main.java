@@ -11,7 +11,7 @@ public class Main {
     public static ArrayList<String> nodes;
     public static ArrayList<String> path;
     public static ArrayList<String> keyWords;
-    public static Queue<Character> alphabet;
+    public static char[] alphabet;
     public static Set<String> dictionary;
 
     public static void main(String[] args) throws Exception {
@@ -28,8 +28,7 @@ public class Main {
         }
         initialize();
         parse(kb);
-        getWordLadderBFS(keyWords.get(0), keyWords.get(1));
-        printLadder(keyWords);
+        printLadder(getWordLadderBFS(keyWords.get(0), keyWords.get(1)));
 
         // TODO methods to read in words, output ladder
     }
@@ -41,11 +40,7 @@ public class Main {
         nodes = new ArrayList<String>();
         path = new ArrayList<String>();
         dictionary = makeDictionary();
-        alphabet = new LinkedList<Character>();
-        char[] tmp = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        for (int i = 0; i < tmp.length; i++) {
-            alphabet.add(tmp[i]);
-        }
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     }
 
     /**
@@ -77,25 +72,43 @@ public class Main {
 
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
         Queue<String> undiscoveredNodes = new LinkedList<String>();
+        Map<String, String> Pairs = new HashMap<>();
+        ArrayList<String> Discovered = new ArrayList<String>();
+        ArrayList<String> wordLadder = new ArrayList<String>();
+        start = start.toUpperCase();
+        end = end.toUpperCase();
         undiscoveredNodes.add(start);
-        ArrayList<LinkedList<String>> adj_list = new ArrayList<LinkedList<String>>();
-        adj_list.add(new LinkedList<String>());
-
+        Discovered.add(start);
         while (!undiscoveredNodes.isEmpty()) {
             String tmp = undiscoveredNodes.poll();
-            if (wordIsValidNode() && !(nodes.contains(tmp)) && dictionary.contains(tmp)) {
-                adj_list.get(0).add(tmp);
-                undiscoveredNodes.offer();
-                //Set this node as discovered
-                //Add all of its neighbors to the queue.
+            for(int i = 0; i<start.length(); i++){
+                char[] word = tmp.toCharArray();
+                for(int j = 0; j< alphabet.length; j++){
+                    word[i] = alphabet[j];
+                    String tmp2 = new String(word);
+                    if(dictionary.contains(tmp2) && !Discovered.contains(tmp2)){
+                        undiscoveredNodes.add(tmp2);
+                        Discovered.add(tmp2);
+                        Pairs.put(tmp2, tmp);
+                        if(tmp2.equals(end)){
+                            wordLadder.add(tmp2);
+                            while(Pairs.containsKey(tmp2)){
+                                wordLadder.add(Pairs.get(tmp2));
+                                tmp2 = Pairs.get(tmp2);
+                            }
+                            return wordLadder;
+                        }
+                    }
+                }
             }
         }
-        return null; // replace this line later with real return
+        return wordLadder; // replace this line later with real return
     }
 
     public static void printLadder(ArrayList<String> ladder) {
-        for(int i = 0; i < ladder.size(); i++) {
-            System.out.println(ladder.get(i));
+        System.out.println("a" + ladder.size() + "-rung word ladder exists between " + ladder.get(0).toLowerCase() + " and " + ladder.get(ladder.size()-1).toLowerCase());
+        for(int i = ladder.size()-1; i>= 0; i--){
+            System.out.println(ladder.get(i).toLowerCase());
         }
     }
 
