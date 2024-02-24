@@ -11,7 +11,7 @@ public class Main {
     public static ArrayList<String> nodes;
     public static ArrayList<String> path;
     public static ArrayList<String> keyWords;
-    public static Queue<Character> alphabet;
+    public static char[] alphabet;
     public static Set<String> dictionary;
 
     public static void main(String[] args) throws Exception {
@@ -28,8 +28,7 @@ public class Main {
         }
         initialize();
         parse(kb);
-        getWordLadderBFS(keyWords.get(0), keyWords.get(1));
-        printLadder(keyWords);
+        printLadder(getWordLadderBFS(keyWords.get(0), keyWords.get(1)));
 
         // TODO methods to read in words, output ladder
     }
@@ -41,11 +40,7 @@ public class Main {
         nodes = new ArrayList<String>();
         path = new ArrayList<String>();
         dictionary = makeDictionary();
-        alphabet = new LinkedList<Character>();
-        char[] tmp = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        for (int i = 0; i < tmp.length; i++) {
-            alphabet.add(tmp[i]);
-        }
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     }
 
     /**
@@ -71,43 +66,87 @@ public class Main {
         // Returned list should be ordered start to end.  Include start and end.
         // If ladder is empty, return list with just start and end.
         // TODO some code
-
+        Deque<String> undiscoveredNodes = new ArrayDeque<>();
+        ArrayList<String> Discovered = new ArrayList<String>();
+        undiscoveredNodes.add(start);
+        boolean foundWord = false;
+        recursiveDFS(start, end, undiscoveredNodes, Discovered, foundWord);
         return null; // replace this line later with real return
     }
 
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
         Queue<String> undiscoveredNodes = new LinkedList<String>();
+        Map<String, String> Pairs = new HashMap<>();
+        ArrayList<String> Discovered = new ArrayList<String>();
+        ArrayList<String> wordLadder = new ArrayList<String>();
+        start = start.toUpperCase();
+        end = end.toUpperCase();
         undiscoveredNodes.add(start);
-        ArrayList<LinkedList<String>> adj_list = new ArrayList<LinkedList<String>>();
-        adj_list.add(new LinkedList<String>());
-
+        Discovered.add(start);
         while (!undiscoveredNodes.isEmpty()) {
             String tmp = undiscoveredNodes.poll();
-            if (wordIsValidNode() && !(nodes.contains(tmp)) && dictionary.contains(tmp)) {
-                adj_list.get(0).add(tmp);
-                undiscoveredNodes.offer();
-                //Set this node as discovered
-                //Add all of its neighbors to the queue.
+            for (int i = 0; i < start.length(); i++) {
+                char[] word = tmp.toCharArray();
+                for (int j = 0; j < alphabet.length; j++) {
+                    word[i] = alphabet[j];
+                    String tmp2 = new String(word);
+                    if (dictionary.contains(tmp2) && !Discovered.contains(tmp2)) {
+                        undiscoveredNodes.add(tmp2);
+                        Discovered.add(tmp2);
+                        Pairs.put(tmp2,tmp);
+                        if (tmp2.equals(end)) {
+                            wordLadder.add(tmp2);
+                            while (Pairs.containsKey(tmp2)) {
+                                wordLadder.add(Pairs.get(tmp2));
+                                tmp2 = Pairs.get(tmp2);
+                            }
+                            for (int h = 0; h < wordLadder.size(); h++) {
+                                wordLadder.set(h, wordLadder.get(h).toLowerCase());
+                            }
+                            return wordLadder;
+                        }
+                    }
+                }
             }
         }
-        return null; // replace this line later with real return
+        wordLadder.add(start);
+        wordLadder.add(end);
+        for (int k = 0; k < wordLadder.size(); k++) {
+            wordLadder.set(k, wordLadder.get(k).toLowerCase());
+        }
+        return wordLadder;
+    }
+
+
+    public static void recursiveDFS(String start, String end, Deque<String> undiscoveredNodes, ArrayList<String> Discovered, boolean foundWord) {
+        if (foundWord) {
+            //Checks flag that is true when the word is discovered in that case adds current word to the ladder and returns
+        }
+        while (!undiscoveredNodes.isEmpty()) {
+            start = start.toUpperCase();
+            String curr = undiscoveredNodes.poll();
+            //Add all nodes that are incident to the current node to the front of the queue
+            //i.e. All the words that are one letter different from current word AND not a word already in list AND not already in discovered.
+            if (Objects.equals(start, end)) {
+                //Add the words to
+            }
+            //If there is no more edges incident to the vertex then return
+            //Otherwise, call the function again but using
+        }
     }
 
     public static void printLadder(ArrayList<String> ladder) {
-        for(int i = 0; i < ladder.size(); i++) {
-            System.out.println(ladder.get(i));
+        if (ladder.size() == 2) {
+            System.out.println("no word ladder can be found between " + ladder.get(0) + " and " + ladder.get(1) + ".");
+        } else {
+            System.out.println("a " + ladder.size() + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size() - 1) + ".");
+            for (int i = ladder.size() - 1; i >= 0; i--) {
+                System.out.println(ladder.get(i));
+            }
         }
     }
 
-    public static boolean wordIsValidNode(String one, String two){
-        int count = 0;
-        for(int i =0; i<one.length(); i++){
-            if(one.charAt(i) == two.charAt(i)){
-                count++;
-            }
-        }
-        return count >= 4;
-    }
+
 
     /* Do not modify makeDictionary */
 	public static Set<String> makeDictionary() {
