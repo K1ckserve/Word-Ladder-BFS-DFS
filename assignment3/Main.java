@@ -103,6 +103,14 @@ public class Main {
                             for (int h = 0; h < wordLadder.size(); h++) {
                                 wordLadder.set(h, wordLadder.get(h).toLowerCase());
                             }
+                            ArrayList<String> wordLadderTmp = new ArrayList<String>(wordLadder);
+                            int p = 0;
+                            int q = wordLadder.size()-1;
+                            while (q >= 0) {
+                                wordLadder.set(p, wordLadderTmp.get(q));
+                                q--;
+                                p++;
+                            }
                             return wordLadder;
                         }
                     }
@@ -113,6 +121,14 @@ public class Main {
         wordLadder.add(end);
         for (int k = 0; k < wordLadder.size(); k++) {
             wordLadder.set(k, wordLadder.get(k).toLowerCase());
+        }
+        ArrayList<String> wordLadderTmp = new ArrayList<String>(wordLadder);
+        int n = 0;
+        int m = wordLadder.size()-1;
+        while (m > 0) {
+            wordLadder.set(n, wordLadderTmp.get(m));
+            m--;
+            n++;
         }
         return wordLadder;
     }
@@ -140,7 +156,7 @@ public class Main {
             System.out.println("no word ladder can be found between " + ladder.get(0) + " and " + ladder.get(1) + ".");
         } else {
             System.out.println("a " + ladder.size() + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size() - 1) + ".");
-            for (int i = ladder.size() - 1; i >= 0; i--) {
+            for (int i = 0; i <= ladder.size() - 1; i++) {
                 System.out.println(ladder.get(i));
             }
         }
@@ -149,7 +165,7 @@ public class Main {
 
 
     /* Do not modify makeDictionary */
-	public static Set<String> makeDictionary() {
+    public static Set<String> makeDictionary() {
         Set<String> words = new HashSet<String>();
         Scanner infile = null;
         try {
