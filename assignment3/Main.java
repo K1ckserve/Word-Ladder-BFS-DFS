@@ -68,9 +68,10 @@ public class Main {
         // TODO some code
         Deque<String> undiscoveredNodes = new ArrayDeque<>();
         ArrayList<String> Discovered = new ArrayList<String>();
+        Map<String, String> Pairs = new HashMap<>();
         undiscoveredNodes.add(start);
         boolean foundWord = false;
-        recursiveDFS(start, end, undiscoveredNodes, Discovered, foundWord);
+        recursiveDFS(start, end, undiscoveredNodes, Discovered, foundWord, Pairs);
         return null; // replace this line later with real return
     }
 
@@ -134,20 +135,43 @@ public class Main {
     }
 
 
-    public static void recursiveDFS(String start, String end, Deque<String> undiscoveredNodes, ArrayList<String> Discovered, boolean foundWord) {
+    public static void recursiveDFS(String start, String end, Deque<String> undiscoveredNodes, ArrayList<String> Discovered, boolean foundWord, Map<String, String> Pairs) {
+        //Pass in the map from main function so it can continue building through recrusion
+        //also we could maybe change return type to arraylist and return word ladder
         if (foundWord) {
             //Checks flag that is true when the word is discovered in that case adds current word to the ladder and returns
         }
         while (!undiscoveredNodes.isEmpty()) {
+            //once it is empty, need to find a way to go back to the prvious word then check all of those paths and repeat
             start = start.toUpperCase();
             String curr = undiscoveredNodes.poll();
-            //Add all nodes that are incident to the current node to the front of the queue
-            //i.e. All the words that are one letter different from current word AND not a word already in list AND not already in discovered.
-            if (Objects.equals(start, end)) {
-                //Add the words to
+            //we can put the if statemnt in here and the start word will change with every time we recall it
+            for (int i = 0; i < start.length(); i++) {
+                char[] word = curr.toCharArray();
+                for (int j = 0; j < alphabet.length; j++) {
+                    word[i] = alphabet[j];
+                    String tmp2 = new String(word);
+                    if (dictionary.contains(tmp2) && !Discovered.contains(tmp2)) {
+                        undiscoveredNodes.add(tmp2);
+                        Discovered.add(tmp2);
+                        Pairs.put(tmp2, curr);
+                        if (tmp2.equals(end)) {
+                            foundWord = true;
+                            return recursiveDFS(start, end, undiscoveredNodes, Discovered, foundWord, Pairs);
+                        }
+                        if (undiscoveredNodes.isEmpty()) { //take the word before and repeat this process?
+                            return recursiveDFS(tmp2, end, undiscoveredNodes, Discovered, foundWord, Pairs);
+                        }
+                    }
+                    //Add all nodes that are incident to the current node to the front of the queue
+                    //i.e. All the words that are one letter different from current word AND not a word already in list AND not already in discovered.
+                    if (Objects.equals(start, end)) {
+                        //Add the words to
+                    }
+                    //If there is no more edges incident to the vertex then return
+                    //Otherwise, call the function again but using
+                }
             }
-            //If there is no more edges incident to the vertex then return
-            //Otherwise, call the function again but using
         }
     }
 
