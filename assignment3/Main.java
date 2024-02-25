@@ -30,7 +30,7 @@ public class Main {
         initialize();
         parse(kb);
         if (keyWords != null) {
-            printLadder(getWordLadderDFS(keyWords.get(0), keyWords.get(1)));
+            printLadder(getWordLadderBFS(keyWords.get(0), keyWords.get(1)));
         }
     }
 
@@ -144,15 +144,6 @@ public class Main {
         for (int k = 0; k < wordLadder.size(); k++) {
             wordLadder.set(k, wordLadder.get(k).toLowerCase());
         }
-        ArrayList<String> wordLadderTmp = new ArrayList<String>(wordLadder);
-        int n = 0;
-        int m = wordLadder.size()-1;
-        while (m > 0) {
-            wordLadder.set(n, wordLadderTmp.get(m));
-            m--;
-            n++;
-        }
-        wordLadderTmp.clear();
         return wordLadder;
     }
 
