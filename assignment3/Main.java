@@ -29,7 +29,7 @@ public class Main {
         }
         initialize();
         parse(kb);
-        if (keyWords != null) {
+        if (!Objects.equals(keyWords.get(0), "/quit") && !Objects.equals(keyWords.get(1), "/quit")) {
             printLadder(getWordLadderBFS(keyWords.get(0), keyWords.get(1)));
         }
     }
@@ -54,10 +54,10 @@ public class Main {
         keyWords = new ArrayList<String>();
         while (i > 0) {
             String tmp = keyboard.next();
-            if (Objects.equals(tmp, "/quit")) {
+            /*if (Objects.equals(tmp, "/quit")) {
                 keyWords = null;
                 return null;
-            }
+            }*/
             keyWords.add(tmp);
             i--;
         }
