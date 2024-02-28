@@ -28,6 +28,7 @@ public class Main {
         }
         initialize();
         parse(kb);
+        //Checks if the user input /quit
         if (keyWords != null) {
             printLadder(getWordLadderDFS(keyWords.get(0), keyWords.get(1)));
         }
@@ -49,6 +50,7 @@ public class Main {
      * If command is /quit, return empty ArrayList.
      */
     public static ArrayList<String> parse(Scanner keyboard) {
+        //Goes through and checks if the
         int i = 2;
         keyWords = new ArrayList<String>();
         while (i > 0) {
@@ -66,14 +68,19 @@ public class Main {
     public static ArrayList<String> getWordLadderDFS(String start, String end) {
         // Returned list should be ordered start to end.  Include start and end.
         // If ladder is empty, return list with just start and end.
+        //Creates a double-ended queue for the undiscovered nodes that the recursive function comes across.
         Deque<String> undiscoveredNodes = new ArrayDeque<>();
+        //Creates an array for the words that the recursive function has already come across.
         ArrayList<String> Discovered = new ArrayList<String>();
+        //Capitalizes the words and adds them to the discovered array.
         start = start.toUpperCase();
         end = end.toUpperCase();
         undiscoveredNodes.add(start);
         Discovered.add(start);
+        //Sets a flag to false which checks if the end word has been found.
         DFSfoundword = false;
         ArrayList<String> wordLadder = new ArrayList<String>();
+        //Calls the recursive function and then checks for if the word ladder could not be found.
         recursiveDFS(start, end, undiscoveredNodes, Discovered, wordLadder);
         if (wordLadder.isEmpty()) {
             start = start.toLowerCase();
@@ -100,8 +107,14 @@ public class Main {
         return dummy;
     }
 
-    //Inspiration for using a HashMap to store node connections: https://stackoverflow.com/questions/22687581/breadth-first-search-traverse-the-binary-tree-with-unknown-height
+
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
+        //Creates a queue for all the undiscovered nodes that still have to be searched.
+        //When the queue is empty and the word is still not found then the function returns an array with just two words
+        //Uses the inspiration from stackoverflow to create keys for all the edges between nodes
+        //Then backtracks from the edges after it is found and adds it to the ladder.
+        //Inspiration for using a HashMap to store node connections:
+        //https://stackoverflow.com/questions/22687581/breadth-first-search-traverse-the-binary-tree-with-unknown-height
         Queue<String> undiscoveredNodes = new LinkedList<String>();
         Map<String, String> Pairs = new HashMap<>();
         ArrayList<String> Discovered = new ArrayList<String>();
@@ -190,6 +203,7 @@ public class Main {
     }
 
     public static void printLadder(ArrayList<String> ladder) {
+        //If the wordLadder array only contains two words then the ladder prints out that there is no connection otherwise it prints out the ladder.
         if (ladder.size() == 2) {
             System.out.println("no word ladder can be found between " + ladder.get(0) + " and " + ladder.get(1) + ".");
         } else {
@@ -201,6 +215,7 @@ public class Main {
     }
 
     public static boolean isNode(String word1, String word2) {
+        //Checks if the two words are one letter apart and returns true if so.
         int count = 0;
         for(int i =0; i<word1.length(); i++){
             if(word1.charAt(i) == word2.charAt(i)){
@@ -221,12 +236,6 @@ public class Main {
                 if (isNode(wordLadder.get(i), wordLadder.get(j))) {
                     //Creates new array that has all previous nodes up to current node and node it connected too
                     //and all nodes after that.
-                    // i = 1
-                    // j = 4
-                    // ab be ce de ac ae ae - wL
-                    // k = 1
-                    // l = 6
-                    // a b e f
                     int removeVal = j-i-1;
                     int a = i+1;
                     int counter = 0;
