@@ -14,7 +14,6 @@ public class Main {
     public static char[] alphabet;
     public static Set<String> dictionary;
     public static boolean DFSfoundword;
-
     public static void main(String[] args) throws Exception {
         Scanner kb;     // input Scanner for commands
         PrintStream ps; // output file, for student testing and grading only
@@ -29,8 +28,8 @@ public class Main {
         }
         initialize();
         parse(kb);
-        if (!Objects.equals(keyWords.get(0), "/quit") && !Objects.equals(keyWords.get(1), "/quit")) {
-            printLadder(getWordLadderBFS(keyWords.get(0), keyWords.get(1)));
+        if (keyWords != null) {
+            printLadder(getWordLadderDFS(keyWords.get(0), keyWords.get(1)));
         }
     }
 
@@ -54,10 +53,10 @@ public class Main {
         keyWords = new ArrayList<String>();
         while (i > 0) {
             String tmp = keyboard.next();
-            /*if (Objects.equals(tmp, "/quit")) {
+            if (Objects.equals(tmp, "/quit")) {
                 keyWords = null;
                 return null;
-            }*/
+            }
             keyWords.add(tmp);
             i--;
         }
@@ -76,12 +75,19 @@ public class Main {
         DFSfoundword = false;
         ArrayList<String> wordLadder = new ArrayList<String>();
         recursiveDFS(start, end, undiscoveredNodes, Discovered, wordLadder);
+        if (wordLadder.isEmpty()) {
+            start = start.toLowerCase();
+            end = end.toLowerCase();
+            wordLadder.add(start);
+            wordLadder.add(end);
+            return wordLadder;
+        }
         for (int h = 0; h < wordLadder.size(); h++) {
             wordLadder.set(h, wordLadder.get(h).toLowerCase());
         }
         ArrayList<String> wordLadderTmp = new ArrayList<String>(wordLadder);
         int p = 0;
-        int q = wordLadder.size()-1;
+        int q = wordLadder.size() - 1;
         while (q >= 0) {
             wordLadder.set(p, wordLadderTmp.get(q));
             q--;
@@ -89,12 +95,12 @@ public class Main {
         }
         wordLadderTmp.clear();
 
-        ArrayList<String> dummy = new ArrayList<String>(DFSsort(wordLadder, wordLadderTmp));
-        wordLadderTmp.clear();
+        ArrayList<String> dummy = new ArrayList<String>(DFSsort(wordLadder));
         wordLadder.clear();
         return dummy;
     }
 
+    //Inspiration for using a HashMap to store node connections: https://stackoverflow.com/questions/22687581/breadth-first-search-traverse-the-binary-tree-with-unknown-height
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
         Queue<String> undiscoveredNodes = new LinkedList<String>();
         Map<String, String> Pairs = new HashMap<>();
@@ -114,7 +120,7 @@ public class Main {
                     if (dictionary.contains(tmp2) && !Discovered.contains(tmp2)) {
                         undiscoveredNodes.add(tmp2);
                         Discovered.add(tmp2);
-                        Pairs.put(tmp2,tmp);
+                        Pairs.put(tmp2, tmp);
                         if (tmp2.equals(end)) {
                             wordLadder.add(tmp2);
                             while (Pairs.containsKey(tmp2)) {
@@ -126,7 +132,7 @@ public class Main {
                             }
                             ArrayList<String> wordLadderTmp = new ArrayList<String>(wordLadder);
                             int p = 0;
-                            int q = wordLadder.size()-1;
+                            int q = wordLadder.size() - 1;
                             while (q >= 0) {
                                 wordLadder.set(p, wordLadderTmp.get(q));
                                 q--;
@@ -146,15 +152,13 @@ public class Main {
         }
         return wordLadder;
     }
-
-
     public static void recursiveDFS(String start, String end, Deque<String> undiscoveredNodes, ArrayList<String> Discovered, ArrayList<String> wordLadder) {
         //Checks flag that is true when the word is discovered in that case adds current word to the ladder and returns
+        //Wait omg can I call the cleaner function during this function
         if (DFSfoundword) {
             wordLadder.add(start);
             return;
         }
-
         //Add all nodes that are incident to the current node to the front of the queue
         //i.e. All the words that are one letter different from current word AND not a word already in list AND not already in discovered.
         while (!undiscoveredNodes.isEmpty()) {
@@ -209,7 +213,7 @@ public class Main {
 
     //Start from the end of the wordLadder-1 and look for words that are one letter away then create new word ladder
     //Going through each of the word in the ArrayList
-    public static ArrayList<String> DFSsort(ArrayList<String> wordLadder, ArrayList<String> wordLadderTmp) {
+    public static ArrayList<String> DFSsort(ArrayList<String> wordLadder) {
         int size2 = wordLadder.size() - 1;
         for (int i = 0; i < size2; i++) {
             for (int j = size2; j >= 0; j--) {
@@ -254,4 +258,7 @@ public class Main {
         }
         return words;
     }
+
 }
+
+
